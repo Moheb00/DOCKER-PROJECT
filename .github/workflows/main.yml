@@ -1,38 +1,22 @@
-name: CI-CD
+name: Build Docker Image
 
 on:
   push:
     branches:
       - main
 
-  pull_request:
-    branches:
-      - main
-
   workflow_dispatch:
 
-  schedule:
-    - cron: '0 0 * * 0'
-
 jobs:
-  test:
+  docker-build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - run: npm install
-      - run: npm test
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  docker:
-    needs: test
-    runs-on: ubuntu-latest
+      - name: Build Docker image
+        run: docker build -t my-website .
 
-    steps:
-      - run: docker build -t myapp .
-
-  deploy:
-    needs: docker
-    runs-on: ubuntu-latest
-
-    steps:
-      - run: echo "Deploying..."
+      - name: Show images
+        run: docker images
